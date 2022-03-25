@@ -8,17 +8,45 @@ body{
     color: rgb(255, 175, 101);
 }
 .logo{
-    width:200px;
-    text-align:center;
-    font-size: 30px;
-    background-color: transparent;
-    float:left;
-    color: rgb(190, 175, 131);
-}
-#eldenring-logo{
-    max-width: 200%;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    float: left;
 }
 #under-logo-txt{
+    color: rgb(190, 175, 131);
+    margin: 0;
+    text-shadow: 0 0 3px #701e1e, 0 0 5px #9c5656;
+    text-align: center;
+    font-size: 30px
+}
+.banner{
+    display: flex;
+    /* flex-direction: row; */
+    align-items: stretch;
+    width: 100%;
+}
+/* #eldenring-logo{
+    max-width: 200%;
+} */
+/* #under-logo-txt{
     margin: 0;
     text-shadow: 0 0 3px #701e1e, 0 0 5px #9c5656;
 }
+.container{
+    align-content: stretch;
+    order: 2;
+}
+.wrapper {
+    display: flex;
+    flex-flow: row-wrap;
+    flex-direction: column;
+} */
+/* .content{
+    background-color: red;
+    flex: 2 0px;
+    order: 1;
+}
+.wrapper > *{
+    flex: 1 100%;
+} */
