@@ -1,3 +1,24 @@
 body{
-    background: #E2F78C;
+    background: #1f1f1f;
+}
+.text-custom{
+    color: rgb(255, 231, 164);
+}
+.link-hover-color:hover{
+    color: rgb(255, 175, 101);
+}
+.logo{
+    width:200px;
+    text-align:center;
+    font-size: 30px;
+    background-color: transparent;
+    float:left;
+    color: rgb(190, 175, 131);
+}
+#eldenring-logo{
+    max-width: 200%;
+}
+#under-logo-txt{
+    margin: 0;
+    text-shadow: 0 0 3px #701e1e, 0 0 5px #9c5656;
 }
