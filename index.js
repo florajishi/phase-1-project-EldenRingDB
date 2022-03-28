@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', (e) => {
-    
+
+document.addEventListener('DOMContentLoaded', e =>{/* get and create Element functions*/
     function getElement(selector){
         const element = document.querySelector(selector)
 
@@ -12,24 +12,48 @@ document.addEventListener('DOMContentLoaded', (e) => {
         if(element) return element
         throw Error(`${selector} doesn't exist`)
     }
-/*Extract Keys from JSON*/
-const tableCol = []
-for(let i = 0; i < eldenRingData.length; i++){
-    for(const key in eldenRingData[i]){
-        if(tableCol.indexOf(key) === -1){
-            tableCol.push(key)
+
+fetch('https://eldenring.fanapis.com/api/items')
+    .then(res => {
+        if(!res.ok){
+            throw Error('ERROR')
         }
-    }
-}
-function createTable(){
-    const table = createElement('table')
-    const tblRow = table.insertRow(-1)
+        return res.json()
 
-    for(let i = 0; i < tableCol.length; i++){
-        const th = createElement('th');
-        th.innerHTML = tableCol[i]
-        tblRow.appendChild(th)
-    }
-}
+    .then(itemData => {
+        // console.log(itemData.data)
+        const allItems = itemData.data.map(item =>{
+            // console.log(key)
+         return `
+         <tbody>
+            <tr>
+            
+                <td>${item.name}</td>
+                <td><img src="${item.image}"></td>
+                <td>${item.description}</td>
+                <td>${item.type}</td>
+                <td>${item.effect}</td>
+                
+            </tr>
+        </tbody>`
+        }).join('')
+        // console.log(html);
+    let itemsTableHeader = createElement('thead')
+    itemsTableHeader.innerHTML = `         
+        <tr>
+            <th>Name</th>
+            <th>Image</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Effect</th>
+        </tr>`
+    itemsTable = getElement('#items-table')
+    itemsTable.innerHTML = allItems
+    itemsTable.appendChild(itemsTableHeader)
 
+    })
+    .catch(err => 
+        console.log(err))
+
+    })
 })
