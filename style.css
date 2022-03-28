@@ -22,31 +22,13 @@ body{
 }
 .banner{
     display: flex;
-    /* flex-direction: row; */
     align-items: stretch;
     width: 100%;
 }
-/* #eldenring-logo{
-    max-width: 200%;
-} */
-/* #under-logo-txt{
-    margin: 0;
-    text-shadow: 0 0 3px #701e1e, 0 0 5px #9c5656;
-}
-.container{
-    align-content: stretch;
-    order: 2;
-}
-.wrapper {
+.navbar{
     display: flex;
-    flex-flow: row-wrap;
+    width: 40%;
+    height: 20%;
+    justify-content: start;
     flex-direction: column;
-} */
-/* .content{
-    background-color: red;
-    flex: 2 0px;
-    order: 1;
 }
-.wrapper > *{
-    flex: 1 100%;
-} */
