@@ -1,5 +1,6 @@
 
-document.addEventListener('DOMContentLoaded', e =>{/* get and create Element functions*/
+document.addEventListener('DOMContentLoaded', e =>{
+    /* get and create Element functions*/
     function getElement(selector){
         const element = document.querySelector(selector)
 
@@ -12,48 +13,59 @@ document.addEventListener('DOMContentLoaded', e =>{/* get and create Element fun
         if(element) return element
         throw Error(`${selector} doesn't exist`)
     }
-
-fetch('https://eldenring.fanapis.com/api/items')
-    .then(res => {
-        if(!res.ok){
-            throw Error('ERROR')
+    const fetchCategory = selectedCategory => {
+        fetch(`${URL_PREFIX}${selectedCategory}`)
+        .then(async resp => {
+            if(!resp.ok){
+                throw Error('ERROR')
+            }
+            const results = await resp.json()
+            const allData = results.data.map(item => (item))
+            console.log(allData)
+        })
+    }
+    const select = getElement('#category-select')
+    const buildDropdwnMenu = () =>{
+        const categories = new Array(
+            'ammos', 'armors', 'ashes', 'bosses', 'creatures', 'incantations', 'items', 'locations', 'npcs', 'shields', 'sorceries', 'spirits', 'talismans', 'weapons'
+            )
+        for(let i = 0; i < categories.length; i++){
+            let option = categories[i]
+            const optElem = createElement('option')
+            optElem.textContent = option
+            optElem.value = option
+            select.appendChild(optElem)
         }
-        return res.json()
-
-    .then(itemData => {
-        // console.log(itemData.data)
-        const allItems = itemData.data.map(item =>{
-            // console.log(key)
-         return `
-         <tbody>
-            <tr>
+    }
+    const categorySelection = categories => {
+        for(let i = 0; i < select.length; i++){
+            if(select.options[i].value === categories[i]){
+                select.selectedIndex = i
+            }
+        }
+    }
+    function fetchJson(urls){
+        fetch(urls)
+        .then(async resp => {
+            if(!resp.ok){
+                throw Error('ERROR')
+            }
+            const results = await resp.json()
+            const allData = results.data.map(item => (item))
+            // console.log(allData)
+            categorizeData(allData)
+        })
+    }
+    function categorizeData(data){
+        for(let i = 0; i < data.length; i++){
+            console.log(data[i])
             
-                <td>${item.name}</td>
-                <td><img src="${item.image}"></td>
-                <td>${item.description}</td>
-                <td>${item.type}</td>
-                <td>${item.effect}</td>
-                
-            </tr>
-        </tbody>`
-        }).join('')
-        // console.log(html);
-    let itemsTableHeader = createElement('thead')
-    itemsTableHeader.innerHTML = `         
-        <tr>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Description</th>
-            <th>Type</th>
-            <th>Effect</th>
-        </tr>`
-    itemsTable = getElement('#items-table')
-    itemsTable.innerHTML = allItems
-    itemsTable.appendChild(itemsTableHeader)
+        }
+    }
+    function getKeyNames(data){
+        let keyNames = []
+        Object.keys(data[0].forEach(key => keyNames.push(key)))
+        console.log(keyNames)
+    }
 
-    })
-    .catch(err => 
-        console.log(err))
-
-    })
 })
