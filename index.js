@@ -22,12 +22,17 @@ document.addEventListener('DOMContentLoaded', e =>{
             }
             const results = await resp.json()
             const allData = results.data.map(item => (item))
-            console.log(allData)
+            // console.log(allData[0])
+            getKeyNames(allData)
+            // getKeyValues(allData)
         })
     }
     const categorySelect = getElement('#category-select')
     const categories = ['ammos', 'armors', 'ashes', 'bosses', 'creatures', 'incantations', 'items', 'locations', 'npcs', 'shields', 'sorceries', 'spirits', 'talismans', 'weapons']
-
+    let thead = createElement('thead')
+    let tbody = createElement('tbody')
+    let table = createElement('table')
+    
     categorySelect.addEventListener('click', buildDropdwnMenu, {once: true})
 
     function buildDropdwnMenu(){
@@ -37,35 +42,59 @@ document.addEventListener('DOMContentLoaded', e =>{
             selectOption.textContent = opt
             selectOption.value = opt
             categorySelect.appendChild(selectOption)
-            console.log(selectOption)
+            // console.log(selectOption)
         }
 }
 categorySelect.addEventListener('change', (event) => {
+
     let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
     selectedCategory.textContent = `${event.target.value}`
     console.log(selectedCategory)
+    table.remove()
     fetchCategory(selectedCategory)
-})
-
-// selectedCategory.onclick = fetchCategory(selectedCategory)
-
-    // const categorySelection = categories => {
-    //     for(let i = 0; i < categorySelect.length; i++){
-    //         if(categorySelect.options[i].value === categories[i]){
-    //             categorySelect.selectedIndex = i
-    //         }
+})    
+    // function buildTableFromData(data){
+    //     getKeyNames(data)
+    //     getKeyValues(data)
+    //     table.appendChild(thead)
+    // }
+    // function getKeyValues(data){
+    //     for(let i = 0; i < Object.entries.length[1]; i++){
+    //         for(const [key ,value] of Object.entries([i])){
+    //         let dataArr = [`${value}`]
+    //         console.log(dataArr)
+    //         keyValuesToTableData(dataArr)
     //     }
-    // }
-    // function categorizeData(data){
-    //     for(let i = 0; i < data.length; i++){
-    //         console.log(data[i])
-            
     //     }
+        
+        
     // }
-    // function getKeyNames(data){
-    //     let keyNames = []
-    //     Object.keys(data[0].forEach(key => keyNames.push(key)))
-    //     console.log(keyNames)
+    // function keyValuesToTableData(keyValues){
+    //     keyValues.forEach(keyVal => {
+    //         let td = createElement('td')
+    //         td.innerText = keyVal
+    //         let keyValData = tbody.appendChild(td)
+    //         console.log(keyValData)
+    //     })
     // }
 
+    function keyNamesToTableHeader(keyNames){
+        keyNames.forEach(keyName => {
+            let th = createElement('th')
+            th.innerText = keyName
+            let keyNamesHeaders = thead.appendChild(th)
+            console.log(keyNamesHeaders)
+            return keyNamesHeaders
+        })
+
+    }
+    function getKeyNames(data){
+        for(const [index,[keyNames, value]] of Object.entries(Object.entries(data[0]))){
+            // console.log(keyNames)
+            keyNamesArr = [`${keyNames}`]
+            keyNamesToTableHeader(keyNamesArr)
+        }
+    
+
+}
 })
