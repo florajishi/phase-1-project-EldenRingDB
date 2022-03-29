@@ -14,21 +14,21 @@ document.addEventListener('DOMContentLoaded', e =>{
         if(element) return element
         throw Error(`${selector} doesn't exist`)
     }
-    // function fetchCategory(selectedCategory){
-    //     fetch(`${URL_PREFIX}${selectedCategory}`)
-    //     .then(async resp => {
-    //         if(!resp.ok){
-    //             throw Error('ERROR')
-    //         }
-    //         const results = await resp.json()
-    //         const allData = results.data.map(item => (item))
-    //         console.log(allData)
-    //     })
-    // }
-    const select = getElement('#category-select')
+    function fetchCategory(selectedCategory){
+        fetch(`${URL_PREFIX}${selectedCategory}`)
+        .then(async resp => {
+            if(!resp.ok){
+                throw Error('ERROR')
+            }
+            const results = await resp.json()
+            const allData = results.data.map(item => (item))
+            console.log(allData)
+        })
+    }
+    const categorySelect = getElement('#category-select')
     const categories = ['ammos', 'armors', 'ashes', 'bosses', 'creatures', 'incantations', 'items', 'locations', 'npcs', 'shields', 'sorceries', 'spirits', 'talismans', 'weapons']
 
-    select.addEventListener('click', buildDropdwnMenu, {once: true})
+    categorySelect.addEventListener('click', buildDropdwnMenu, {once: true})
 
     function buildDropdwnMenu(){
         for(let i = 0; i < categories.length; i++){
@@ -36,27 +36,23 @@ document.addEventListener('DOMContentLoaded', e =>{
             let selectOption = createElement("option")
             selectOption.textContent = opt
             selectOption.value = opt
-            select.appendChild(selectOption)
-            console.log(selectOption.textContent)
+            categorySelect.appendChild(selectOption)
+            console.log(selectOption)
         }
-}        
+}
+categorySelect.addEventListener('change', (event) => {
+    let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
+    selectedCategory.textContent = `${event.target.value}`
+    console.log(selectedCategory)
+    fetchCategory(selectedCategory)
+})
 
-    function categorySelection(){
-        let optionTxt = select.options
-        for(let i = 0; i < select.length; i++){
-            if(optionTxt[i].value == categories[i]){
-                select.selectedIndex = i
-                console.log(optionTxt[i])
-            }
-        }
-        // let categorySel = select.options[select.selectedIndex].text
-        // fetchCategory(categorySel)
-    }
+// selectedCategory.onclick = fetchCategory(selectedCategory)
 
     // const categorySelection = categories => {
-    //     for(let i = 0; i < select.length; i++){
-    //         if(select.options[i].value === categories[i]){
-    //             select.selectedIndex = i
+    //     for(let i = 0; i < categorySelect.length; i++){
+    //         if(categorySelect.options[i].value === categories[i]){
+    //             categorySelect.selectedIndex = i
     //         }
     //     }
     // }
