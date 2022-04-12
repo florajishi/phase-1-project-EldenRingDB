@@ -22,18 +22,13 @@ document.addEventListener('DOMContentLoaded', e =>{
             }
             const results = await resp.json()
             const allData = results.data.map(item => (item))
-            // console.log(allData[0])
-            getKeyNames(allData)
-            // getKeyValues(allData)
-        })
+            createTable(allData)
+            })
     }
     const categorySelect = getElement('#category-select')
     const categories = ['ammos', 'armors', 'ashes', 'bosses', 'creatures', 'incantations', 'items', 'locations', 'npcs', 'shields', 'sorceries', 'spirits', 'talismans', 'weapons']
-    let thead = createElement('thead')
-    let tbody = createElement('tbody')
-    let table = createElement('table')
-    
     categorySelect.addEventListener('click', buildDropdwnMenu, {once: true})
+    const table = createElement('table')
 
     function buildDropdwnMenu(){
         for(let i = 0; i < categories.length; i++){
@@ -42,59 +37,78 @@ document.addEventListener('DOMContentLoaded', e =>{
             selectOption.textContent = opt
             selectOption.value = opt
             categorySelect.appendChild(selectOption)
-            // console.log(selectOption)
         }
 }
 categorySelect.addEventListener('change', (event) => {
 
     let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
     selectedCategory.textContent = `${event.target.value}`
-    console.log(selectedCategory)
-    table.remove()
     fetchCategory(selectedCategory)
-})    
-    // function buildTableFromData(data){
-    //     getKeyNames(data)
-    //     getKeyValues(data)
-    //     table.appendChild(thead)
-    // }
-    // function getKeyValues(data){
-    //     for(let i = 0; i < Object.entries.length[1]; i++){
-    //         for(const [key ,value] of Object.entries([i])){
-    //         let dataArr = [`${value}`]
-    //         console.log(dataArr)
-    //         keyValuesToTableData(dataArr)
-    //     }
-    //     }
-        
-        
-    // }
-    // function keyValuesToTableData(keyValues){
-    //     keyValues.forEach(keyVal => {
-    //         let td = createElement('td')
-    //         td.innerText = keyVal
-    //         let keyValData = tbody.appendChild(td)
-    //         console.log(keyValData)
-    //     })
-    // }
-
-    function keyNamesToTableHeader(keyNames){
-        keyNames.forEach(keyName => {
-            let th = createElement('th')
-            th.innerText = keyName
-            let keyNamesHeaders = thead.appendChild(th)
-            console.log(keyNamesHeaders)
-            return keyNamesHeaders
-        })
-
-    }
-    function getKeyNames(data){
-        for(const [index,[keyNames, value]] of Object.entries(Object.entries(data[0]))){
-            // console.log(keyNames)
-            keyNamesArr = [`${keyNames}`]
-            keyNamesToTableHeader(keyNamesArr)
-        }
-    
-
+    resetTable()
+})
+function resetTable(){
+    table.innerHTML = ''
 }
+function createTable(data){
+    let column = Object.keys(data[0])
+    console.log(column)
+    let tr = createElement('tr')
+    column.forEach(key =>{
+        const th = createElement('th')
+        th.textContent = key
+        if(th.textContent === 'id'){
+            th.remove()
+        }else{
+            tr.appendChild(th)
+            console.log(tr)
+            table.appendChild(tr)
+        }
+        
+    })
+    data.forEach(obj =>{ 
+        let tr = table.insertRow(-1)
+        column.forEach(key => {
+            let tableCell = tr.insertCell(-1)
+            if(Array.isArray(obj[key])){
+                obj[key].forEach(item => {
+                    let itemData = Object.values(item)
+                    const div = createElement('div')
+                    div.textContent = itemData
+                    tableCell.appendChild(div)
+                })
+            }else if (key.includes('image')){
+                tableCell.innerHTML = `<img src="${obj[key]}">`
+            } else if (key.includes('id')){
+                delete key
+                tableCell.remove()
+            } else {
+                tableCell.textContent = obj[key]
+            }
+        })
+    })
+    const tableContainer = getElement('#tableContainer')
+    tableContainer.innerHTML = ''
+    tableContainer.appendChild(table)
+}
+table.setAttribute('class', 'table table-bordered table-dark table-hover table-responsive')
+
+const searchInput = getElement("#searchInput")
+searchInput.addEventListener('input', searchData)
+
+function searchData(){
+    const filter = searchInput.value.toUpperCase()
+    tr = table.getElementsByTagName('tr')
+    for(let i = 0; i < tr.length; i++){
+        td = tr[i].getElementsByTagName('td')[0];
+        if(td){
+            txtVal = td.textContent || td.innerText;
+            if(txtVal.toUpperCase().indexOf(filter) > -1){
+                tr[i].style.display = ''
+            } else {
+                tr[i].style.display = 'none'
+            }
+        }
+    }
+}
+    
 })
