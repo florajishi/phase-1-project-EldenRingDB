@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', e =>{
         throw Error(`${selector} doesn't exist`)
     }
     function fetchCategory(selectedCategory){
-        fetch(`${URL_PREFIX}${selectedCategory}`)
+        fetch(`${URL_PREFIX}${selectedCategory}?limit=300`)
         .then(async resp => {
             if(!resp.ok){
                 throw Error('ERROR')
@@ -49,6 +49,7 @@ categorySelect.addEventListener('change', (event) => {
 function resetTable(){
     table.innerHTML = ''
 }
+
 function createTable(data){
     let column = Object.keys(data[0])
     console.log(column)
@@ -71,10 +72,18 @@ function createTable(data){
             let tableCell = tr.insertCell(-1)
             if(Array.isArray(obj[key])){
                 obj[key].forEach(item => {
-                    let itemData = Object.values(item)
+                    console.log(item)
                     const div = createElement('div')
-                    div.textContent = itemData
-                    tableCell.appendChild(div)
+
+                    if(typeof item === 'string'){
+                        div.textContent = item
+                        tableCell.appendChild(div)
+                    }else{
+                        let itemData = Object.values(item)
+                        div.textContent = itemData
+                        tableCell.appendChild(div) 
+                    }
+                    
                 })
             }else if (key.includes('image')){
                 tableCell.innerHTML = `<img src="${obj[key]}">`
@@ -90,7 +99,7 @@ function createTable(data){
     tableContainer.innerHTML = ''
     tableContainer.appendChild(table)
 }
-table.setAttribute('class', 'table table-bordered table-dark table-hover table-responsive')
+table.setAttribute('class', 'table table-bordered table-dark table-hover table-responsive rounded-6')
 
 const searchInput = getElement("#searchInput")
 searchInput.addEventListener('input', searchData)
