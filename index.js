@@ -1,34 +1,27 @@
 
 document.addEventListener('DOMContentLoaded', e =>{
     const URL_PREFIX = 'https://eldenring.fanapis.com/api/'
-    /* get and create Element functions*/
+    const table = createElement('table')
+        table.setAttribute('class', 'table table-bordered table-dark table-hover table-responsive rounded-6')
+
+
+    /* Dynamic DOM Manipulation helpers*/
     function getElement(selector){
         const element = document.querySelector(selector)
 
-        if(element) return element
-        throw Error(`${selector} doesn't exist`)
+            if(element) return element
+            throw Error(`${selector} doesn't exist`)
     }
     function createElement(selector){
         const element = document.createElement(selector)
 
-        if(element) return element
-        throw Error(`${selector} doesn't exist`)
+            if(element) return element
+            throw Error(`${selector} doesn't exist`)
     }
-    function fetchCategory(selectedCategory){
-        fetch(`${URL_PREFIX}${selectedCategory}?limit=300`)
-        .then(async resp => {
-            if(!resp.ok){
-                throw Error('ERROR')
-            }
-            const results = await resp.json()
-            const allData = results.data.map(item => (item))
-            createTable(allData)
-            })
-    }
+    /* All dropdown menu variables and functionality*/
     const categorySelect = getElement('#category-select')
     const categories = ['ammos', 'armors', 'ashes', 'bosses', 'creatures', 'incantations', 'items', 'locations', 'npcs', 'shields', 'sorceries', 'spirits', 'talismans', 'weapons']
     categorySelect.addEventListener('click', buildDropdwnMenu, {once: true})
-    const table = createElement('table')
 
     function buildDropdwnMenu(){
         for(let i = 0; i < categories.length; i++){
@@ -38,68 +31,60 @@ document.addEventListener('DOMContentLoaded', e =>{
             selectOption.value = opt
             categorySelect.appendChild(selectOption)
         }
-}
-categorySelect.addEventListener('change', (event) => {
+    }
+    categorySelect.addEventListener('change', (event) => {
 
-    let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
-    selectedCategory.textContent = `${event.target.value}`
-    fetchCategory(selectedCategory)
-    resetTable()
-})
-function resetTable(){
-    table.innerHTML = ''
-}
-
-function createTable(data){
-    let column = Object.keys(data[0])
-    console.log(column)
-    let tr = createElement('tr')
-    column.forEach(key =>{
-        const th = createElement('th')
-        th.textContent = key
-        if(th.textContent === 'id'){
-            th.remove()
-        }else{
-            tr.appendChild(th)
-            console.log(tr)
-            table.appendChild(tr)
-        }
-        
+        let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
+        selectedCategory.textContent = `${event.target.value}`
+        fetchCategory(selectedCategory)
+        resetTable()
     })
-    data.forEach(obj =>{ 
-        let tr = table.insertRow(-1)
-        column.forEach(key => {
-            let tableCell = tr.insertCell(-1)
-            if(Array.isArray(obj[key])){
-                obj[key].forEach(item => {
-                    console.log(item)
-                    const div = createElement('div')
+    function resetTable(){
+        table.innerHTML = ''
+    }
 
-                    if(typeof item === 'string'){
-                        div.textContent = item
-                        tableCell.appendChild(div)
-                    }else{
-                        let itemData = Object.values(item)
-                        div.textContent = itemData
-                        tableCell.appendChild(div) 
-                    }
-                    
-                })
-            }else if (key.includes('image')){
-                tableCell.innerHTML = `<img src="${obj[key]}">`
-            } else if (key.includes('id')){
-                delete key
-                tableCell.remove()
-            } else {
-                tableCell.textContent = obj[key]
-            }
+    /* Dynamically generated table from data*/
+    function createTable(data){
+        let keys = Object.keys(data[0])
+        let tr = createElement('tr')
+        keys.forEach(key =>{
+            const th = createElement('th')
+            th.textContent = key
+            th.textContent === 'id' ? th.remove() : (tr.appendChild(th) , table.appendChild(tr))
         })
-    })
+        data.forEach(obj =>{ 
+            let tr = table.insertRow(-1)
+            keys.forEach(key => {
+                let tableCell = tr.insertCell(-1)
+                if(Array.isArray(obj[key])){
+                    obj[key].forEach(item => {
+                    const div = createElement('div')
+                        if(typeof item === 'string'){
+                            div.textContent = item
+                            tableCell.appendChild(div)
+                        }else{
+                            let itemData = Object.values(item)
+                            div.textContent = itemData
+                            tableCell.appendChild(div) 
+                        }
+                    })
+                }
+                else if (key.includes('image')){
+                    tableCell.innerHTML = `<img src="${obj[key]}">`
+                }
+                else if (key.includes('id')){
+                    delete key
+                    tableCell.remove()
+                }
+                else {
+                    tableCell.textContent = obj[key]
+                }
+            })
+        })
     const tableContainer = getElement('#tableContainer')
-    tableContainer.innerHTML = ''
-    tableContainer.appendChild(table)
-}
-table.setAttribute('class', 'table table-bordered table-dark table-hover table-responsive rounded-6')
+        tableContainer.innerHTML = ''
+        tableContainer.appendChild(table)
+    }
 
 const searchInput = getElement("#searchInput")
 searchInput.addEventListener('input', searchData)
@@ -119,5 +104,17 @@ function searchData(){
         }
     }
 }
+function fetchCategory(selectedCategory){
+    fetch(`${URL_PREFIX}${selectedCategory}?limit=300`)
+    .then(async resp => {
+        if(!resp.ok){
+            throw Error('ERROR')
+        }
+        const results = await resp.json()
+        const allData = results.data.map(item => (item))
+        createTable(allData)
+        })
+}
+
     
 })
