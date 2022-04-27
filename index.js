@@ -42,9 +42,16 @@ document.addEventListener('DOMContentLoaded', e =>{
     function resetTable(){
         table.innerHTML = ''
     }
-
+    
     /* Dynamically generated table from data*/
-    function createTable(data){
+function createTable(data){
+        createHeader(data)
+        createRows(data)
+        const tableContainer = getElement('#tableContainer')
+            tableContainer.innerHTML = ''
+            tableContainer.appendChild(table)
+    }
+    function createHeader(data){
         let keys = Object.keys(data[0])
         let tr = createElement('tr')
         keys.forEach(key =>{
@@ -52,40 +59,44 @@ document.addEventListener('DOMContentLoaded', e =>{
             th.textContent = key
             th.textContent === 'id' ? th.remove() : (tr.appendChild(th) , table.appendChild(tr))
         })
+    }
+    function createRows(data){
+        let keys = Object.keys(data[0])
         data.forEach(obj =>{ 
             let tr = table.insertRow(-1)
             keys.forEach(key => {
                 let tableCell = tr.insertCell(-1)
-                if(Array.isArray(obj[key])){
-                    obj[key].forEach(item => {
-                    const div = createElement('div')
-                        if(typeof item === 'string'){
-                            div.textContent = item
-                            tableCell.appendChild(div)
-                        }else{
-                            let itemData = Object.values(item)
-                            div.textContent = itemData
-                            tableCell.appendChild(div) 
-                        }
-                    })
-                }
-                else if (key.includes('image')){
-                    tableCell.innerHTML = `<img src="${obj[key]}">`
-                }
-                else if (key.includes('id')){
-                    delete key
-                    tableCell.remove()
-                }
-                else {
-                    tableCell.textContent = obj[key]
+                checkItemKeys(obj, key, tableCell)
+            })
+        })      
+    }
+    function checkItemKeys(obj, key, tableCell){
+        if(Array.isArray(obj[key])){
+            obj[key].forEach(item => {
+            const div = createElement('div')
+                if(typeof item === 'string'){
+                    div.textContent = item
+                    tableCell.appendChild(div)
+                }else{
+                    let itemData = Object.values(item)
+                    div.textContent = itemData
+                    tableCell.appendChild(div) 
                 }
             })
-        })
-    const tableContainer = getElement('#tableContainer')
-        tableContainer.innerHTML = ''
-        tableContainer.appendChild(table)
+        }
+        else if (key.includes('image')){
+            tableCell.innerHTML = `<img src="${obj[key]}">`
+        }
+        else if (key.includes('id')){
+            delete key
+            tableCell.remove()
+        }
+        else {
+            tableCell.textContent = obj[key]
+        }
     }
 
+    /* SEARCH FEATURE */
 const searchInput = getElement("#searchInput")
 searchInput.addEventListener('input', searchData)
 
@@ -104,8 +115,9 @@ function searchData(){
         }
     }
 }
+    /* FETCH */
 function fetchCategory(selectedCategory){
-    fetch(`${URL_PREFIX}${selectedCategory}?limit=300`)
+    fetch(`${URL_PREFIX}${selectedCategory}?limit=200`)
     .then(async resp => {
         if(!resp.ok){
             throw Error('ERROR')
