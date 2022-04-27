@@ -24,16 +24,15 @@ document.addEventListener('DOMContentLoaded', e =>{
     categorySelect.addEventListener('click', buildDropdwnMenu, {once: true})
 
     function buildDropdwnMenu(){
-        for(let i = 0; i < categories.length; i++){
-            let opt = categories[i]
+        categories.forEach(category => {
+            let opt = category
             let selectOption = createElement("option")
             selectOption.textContent = opt
             selectOption.value = opt
             categorySelect.appendChild(selectOption)
-        }
+        })
     }
     categorySelect.addEventListener('change', (event) => {
-
         let selectedCategory = categorySelect.options[categorySelect.selectedIndex].value
         selectedCategory.textContent = `${event.target.value}`
         fetchCategory(selectedCategory)
@@ -44,7 +43,7 @@ document.addEventListener('DOMContentLoaded', e =>{
     }
     
     /* Dynamically generated table from data*/
-function createTable(data){
+    function createTable(data){
         createHeader(data)
         createRows(data)
         const tableContainer = getElement('#tableContainer')
@@ -97,36 +96,35 @@ function createTable(data){
     }
 
     /* SEARCH FEATURE */
-const searchInput = getElement("#searchInput")
-searchInput.addEventListener('input', searchData)
+    const searchInput = getElement("#searchInput")
+    searchInput.addEventListener('input', searchData)
 
-function searchData(){
-    const filter = searchInput.value.toUpperCase()
-    tr = table.getElementsByTagName('tr')
-    for(let i = 0; i < tr.length; i++){
-        td = tr[i].getElementsByTagName('td')[0];
-        if(td){
-            txtVal = td.textContent || td.innerText;
-            if(txtVal.toUpperCase().indexOf(filter) > -1){
-                tr[i].style.display = ''
-            } else {
-                tr[i].style.display = 'none'
+    function searchData(){
+        const filter = searchInput.value.toUpperCase()
+        tr = table.getElementsByTagName('tr')
+        for(let i = 0; i < tr.length; i++){
+            td = tr[i].getElementsByTagName('td')[0];
+            if(td){
+                txtVal = td.textContent || td.innerText;
+                if(txtVal.toUpperCase().indexOf(filter) > -1){
+                    tr[i].style.display = ''
+                } else {
+                    tr[i].style.display = 'none'
+                }
             }
         }
     }
-}
-    /* FETCH */
-function fetchCategory(selectedCategory){
-    fetch(`${URL_PREFIX}${selectedCategory}?limit=200`)
-    .then(async resp => {
-        if(!resp.ok){
-            throw Error('ERROR')
-        }
-        const results = await resp.json()
-        const allData = results.data.map(item => (item))
-        createTable(allData)
+        /* FETCH */
+    const fetchCategory = selectedCategory => {
+        fetch(`${URL_PREFIX}${selectedCategory}?limit=200`)
+        .then(async resp => {
+            if(!resp.ok){
+                throw Error('ERROR')
+            }
+            const results = await resp.json()
+            const allData = results.data.map(item => (item))
+            createTable(allData)
         })
-}
-
-    
+    } 
 })
+
